@@ -19,14 +19,20 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 settings = get_settings()
-config.set_main_option("sqlalchemy.url", settings.database_sync_url)
+
+# Normalize to the psycopg v3 dialect; SQLAlchemy defaults `postgresql://`
+# to psycopg2, which we do not install.
+_sync_url = settings.database_sync_url
+if _sync_url.startswith("postgresql://"):
+    _sync_url = "postgresql+psycopg://" + _sync_url.removeprefix("postgresql://")
+config.set_main_option("sqlalchemy.url", _sync_url)
 
 target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
     context.configure(
-        url=settings.database_sync_url,
+        url=_sync_url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},

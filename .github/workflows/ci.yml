@@ -27,7 +27,7 @@ jobs:
         ports: ["6379:6379"]
     env:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/chore_tracker_test
-      DATABASE_SYNC_URL: postgresql://postgres:postgres@localhost:5432/chore_tracker_test
+      DATABASE_SYNC_URL: postgresql+psycopg://postgres:postgres@localhost:5432/chore_tracker_test
       REDIS_URL: redis://localhost:6379/0
     steps:
       - uses: actions/checkout@v4
