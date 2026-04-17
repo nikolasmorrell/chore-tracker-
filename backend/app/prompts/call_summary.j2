@@ -1,0 +1,18 @@
+{# version: v1 — post-call summary #}
+Summarize the following phone call for an office manager who did not hear it.
+Be specific: caller name, phone, reason for call, resolution, and any required follow-up.
+
+Return JSON:
+{
+  "summary": string,              // 2-4 sentences
+  "intent": string,
+  "action_items": [
+    {"title": string, "due_in_hours": number|null, "priority": "low|normal|high|urgent"}
+  ]
+}
+
+------ TRANSCRIPT ------
+{% for turn in turns %}
+{{ turn.speaker }}: {{ turn.text }}
+{% endfor %}
+------ END ------

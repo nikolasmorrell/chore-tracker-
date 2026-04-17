@@ -1,0 +1,82 @@
+# Render.com blueprint — backend API + Celery worker + managed Postgres + Redis.
+# Apply with `render blueprint apply` once the repo is connected to Render.
+
+services:
+  - type: web
+    name: chore-tracker-api
+    runtime: docker
+    repo: https://github.com/nikolasmorrell/chore-tracker-
+    dockerfilePath: backend/Dockerfile
+    rootDir: backend
+    plan: standard
+    healthCheckPath: /healthz
+    envVars:
+      - fromGroup: chore-tracker-shared
+      - key: APP_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: chore-tracker-db
+          property: connectionString
+      - key: DATABASE_SYNC_URL
+        fromDatabase:
+          name: chore-tracker-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: chore-tracker-redis
+          property: connectionString
+
+  - type: worker
+    name: chore-tracker-worker
+    runtime: docker
+    repo: https://github.com/nikolasmorrell/chore-tracker-
+    dockerfilePath: backend/Dockerfile
+    rootDir: backend
+    plan: standard
+    dockerCommand: uv run celery -A app.workers.celery_app.celery worker -l info
+    envVars:
+      - fromGroup: chore-tracker-shared
+      - key: DATABASE_URL
+        fromDatabase:
+          name: chore-tracker-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: chore-tracker-redis
+          property: connectionString
+
+  - type: redis
+    name: chore-tracker-redis
+    plan: standard
+    ipAllowList: []
+
+databases:
+  - name: chore-tracker-db
+    plan: standard
+    postgresMajorVersion: 16
+    ipAllowList: []
+
+envVarGroups:
+  - name: chore-tracker-shared
+    envVars:
+      - key: LOG_LEVEL
+        value: INFO
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: JWT_PRIVATE_KEY_PATH
+        value: /etc/secrets/jwt_private.pem
+      - key: JWT_PUBLIC_KEY_PATH
+        value: /etc/secrets/jwt_public.pem
