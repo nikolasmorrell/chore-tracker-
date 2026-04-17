@@ -17,10 +17,10 @@ async def create_task() -> None:
 
 
 @router.patch("/{task_id}", summary="Update a task")
-async def update_task(task_id: UUID) -> None:  # noqa: ARG001
+async def update_task(task_id: UUID) -> None:
     raise HTTPException(status.HTTP_501_NOT_IMPLEMENTED, "Phase 2")
 
 
 @router.post("/{task_id}/assign", summary="Assign a task to a teammate")
-async def assign_task(task_id: UUID) -> None:  # noqa: ARG001
+async def assign_task(task_id: UUID) -> None:
     raise HTTPException(status.HTTP_501_NOT_IMPLEMENTED, "Phase 2")

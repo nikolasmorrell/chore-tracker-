@@ -12,5 +12,5 @@ async def list_alerts() -> None:
 
 
 @router.post("/{alert_id}/dismiss", summary="Mark an alert as dismissed")
-async def dismiss_alert(alert_id: UUID) -> None:  # noqa: ARG001
+async def dismiss_alert(alert_id: UUID) -> None:
     raise HTTPException(status.HTTP_501_NOT_IMPLEMENTED, "Phase 2")

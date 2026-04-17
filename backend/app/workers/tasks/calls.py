@@ -5,5 +5,5 @@ from app.workers.celery_app import celery
 
 
 @celery.task(name="calls.summarize")
-def summarize_call(call_id: str) -> None:  # noqa: ARG001 pragma: no cover
+def summarize_call(call_id: str) -> None:
     raise NotImplementedError("Wired in Phase 3")

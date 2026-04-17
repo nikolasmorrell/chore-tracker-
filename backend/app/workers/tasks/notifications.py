@@ -5,10 +5,10 @@ from app.workers.celery_app import celery
 
 
 @celery.task(name="notifications.send_email")
-def send_email_task(to: str, subject: str, html: str) -> None:  # noqa: ARG001 pragma: no cover
+def send_email_task(to: str, subject: str, html: str) -> None:
     raise NotImplementedError("Wired in Phase 2")
 
 
 @celery.task(name="notifications.send_sms")
-def send_sms_task(to: str, body: str) -> None:  # noqa: ARG001 pragma: no cover
+def send_sms_task(to: str, body: str) -> None:
     raise NotImplementedError("Wired in Phase 2")

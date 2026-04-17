@@ -6,7 +6,7 @@ back to the route.
 """
 from __future__ import annotations
 
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Callable
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
@@ -25,7 +25,7 @@ def get_current_user() -> None:  # pragma: no cover — phase 2
     raise HTTPException(status.HTTP_501_NOT_IMPLEMENTED, "Auth implemented in Phase 2")
 
 
-def require_role(*roles: str):  # pragma: no cover — phase 2
+def require_role(*roles: str) -> Callable[[], None]:  # pragma: no cover — phase 2
     def _guard() -> None:
         raise HTTPException(status.HTTP_501_NOT_IMPLEMENTED, "RBAC implemented in Phase 2")
 

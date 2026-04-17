@@ -17,10 +17,10 @@ async def list_documents() -> None:
 
 
 @router.get("/{document_id}", summary="Fetch a document with its latest extraction")
-async def get_document(document_id: UUID) -> None:  # noqa: ARG001
+async def get_document(document_id: UUID) -> None:
     raise HTTPException(status.HTTP_501_NOT_IMPLEMENTED, "Phase 2")
 
 
 @router.post("/{document_id}/reprocess", summary="Re-run OCR + Claude extraction")
-async def reprocess_document(document_id: UUID) -> None:  # noqa: ARG001
+async def reprocess_document(document_id: UUID) -> None:
     raise HTTPException(status.HTTP_501_NOT_IMPLEMENTED, "Phase 2")

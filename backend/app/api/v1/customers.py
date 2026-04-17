@@ -17,15 +17,15 @@ async def create_customer() -> None:
 
 
 @router.get("/{customer_id}", summary="Fetch a single customer")
-async def get_customer(customer_id: UUID) -> None:  # noqa: ARG001
+async def get_customer(customer_id: UUID) -> None:
     raise HTTPException(status.HTTP_501_NOT_IMPLEMENTED, "Phase 2")
 
 
 @router.patch("/{customer_id}", summary="Update a customer")
-async def update_customer(customer_id: UUID) -> None:  # noqa: ARG001
+async def update_customer(customer_id: UUID) -> None:
     raise HTTPException(status.HTTP_501_NOT_IMPLEMENTED, "Phase 2")
 
 
 @router.delete("/{customer_id}", summary="Delete a customer")
-async def delete_customer(customer_id: UUID) -> None:  # noqa: ARG001
+async def delete_customer(customer_id: UUID) -> None:
     raise HTTPException(status.HTTP_501_NOT_IMPLEMENTED, "Phase 2")

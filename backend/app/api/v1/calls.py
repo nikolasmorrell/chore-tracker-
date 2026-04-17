@@ -12,5 +12,5 @@ async def list_calls() -> None:
 
 
 @router.get("/{call_id}", summary="Fetch a call with transcript + summary")
-async def get_call(call_id: UUID) -> None:  # noqa: ARG001
+async def get_call(call_id: UUID) -> None:
     raise HTTPException(status.HTTP_501_NOT_IMPLEMENTED, "Phase 3")
