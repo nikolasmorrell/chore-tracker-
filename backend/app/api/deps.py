@@ -5,7 +5,7 @@ is bound to the caller's tenant, so RLS filters all reads/writes.
 """
 from __future__ import annotations
 
-from collections.abc import AsyncIterator, Callable
+from collections.abc import AsyncIterator, Awaitable, Callable
 from typing import Annotated
 from uuid import UUID
 
@@ -71,7 +71,7 @@ async def get_current_user(
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
-def require_role(*allowed: str) -> Callable[[User], User]:
+def require_role(*allowed: str) -> Callable[[User], Awaitable[User]]:
     """FastAPI dependency factory that enforces the user's role."""
 
     async def _checker(user: CurrentUser) -> User:

@@ -41,7 +41,7 @@ async def presigned_post(bucket: str, key: str, *, content_type: str, max_bytes:
 
     def _do() -> dict[str, Any]:
         client = _s3_client()
-        return client.generate_presigned_post(
+        result: dict[str, Any] = client.generate_presigned_post(
             Bucket=bucket,
             Key=key,
             Fields={"Content-Type": content_type},
@@ -51,6 +51,7 @@ async def presigned_post(bucket: str, key: str, *, content_type: str, max_bytes:
             ],
             ExpiresIn=settings.s3_presigned_url_ttl_seconds,
         )
+        return result
 
     return await anyio.to_thread.run_sync(_do)
 
@@ -60,11 +61,12 @@ async def presigned_get(bucket: str, key: str) -> str:
 
     def _do() -> str:
         client = _s3_client()
-        return client.generate_presigned_url(
+        url: str = client.generate_presigned_url(
             "get_object",
             Params={"Bucket": bucket, "Key": key},
             ExpiresIn=settings.s3_presigned_url_ttl_seconds,
         )
+        return url
 
     return await anyio.to_thread.run_sync(_do)
 

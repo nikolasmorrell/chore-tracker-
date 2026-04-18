@@ -86,9 +86,10 @@ class ClaudeClient:
                     system=system or "You are a helpful assistant.",
                     messages=[{"role": "user", "content": prompt}],
                 )
-                text_parts = [
-                    block.text for block in message.content if getattr(block, "type", None) == "text"
-                ]
+                text_parts: list[str] = []
+                for block in message.content:
+                    if getattr(block, "type", None) == "text":
+                        text_parts.append(getattr(block, "text", ""))
                 return ClaudeResponse(
                     text="".join(text_parts),
                     model=message.model,
