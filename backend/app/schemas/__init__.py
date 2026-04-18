@@ -12,6 +12,7 @@ from app.schemas.auth import (
     TokenPair,
     TokenResponse,
 )
+from app.schemas.call import CallDetail, CallRead, CallTurnRead
 from app.schemas.common import CursorPage, Message
 from app.schemas.customer import CustomerCreate, CustomerRead, CustomerUpdate
 from app.schemas.document import (
@@ -27,6 +28,9 @@ from app.schemas.user import InviteCreate, InviteRead, UserRead, UserUpdate
 
 __all__ = [
     "AlertRead",
+    "CallDetail",
+    "CallRead",
+    "CallTurnRead",
     "CursorPage",
     "CustomerCreate",
     "CustomerRead",

@@ -47,6 +47,7 @@ class Tenant(UUIDPKMixin, TimestampMixin, Base):
     trial_ends_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     stripe_customer_id: Mapped[str | None] = mapped_column(String(120), unique=True)
     stripe_subscription_id: Mapped[str | None] = mapped_column(String(120), unique=True)
+    twilio_phone_number: Mapped[str | None] = mapped_column(String(40), unique=True)
 
     users: Mapped[list[User]] = relationship(back_populates="tenant", cascade="all, delete-orphan")
 
