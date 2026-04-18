@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Chore Tracker — AI operations for service businesses",
+  title: "Sellable — AI operations for service businesses",
   description:
     "Automate insurance certificates, permits, contracts, and customer calls for roofing, HVAC, plumbing, and contracting companies.",
 };

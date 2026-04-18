@@ -1,7 +1,7 @@
 [project]
-name = "chore-tracker-backend"
+name = "sellable-backend"
 version = "0.1.0"
-description = "Multi-tenant AI SaaS for service businesses — FastAPI backend"
+description = "Sellable — multi-tenant AI SaaS for service businesses — FastAPI backend"
 requires-python = ">=3.12"
 dependencies = [
   "fastapi>=0.115",
@@ -50,7 +50,7 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "N", "SIM", "RUF"]
-ignore = ["E501"]
+ignore = ["E501", "B008", "UP046"]
 
 [tool.mypy]
 python_version = "3.12"

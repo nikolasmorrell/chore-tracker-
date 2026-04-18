@@ -1,4 +1,4 @@
-# chore-tracker-
+# Sellable
 
 Multi-tenant AI operations platform for service businesses (roofing, HVAC,
 plumbing, general contracting). It automates document compliance, answers

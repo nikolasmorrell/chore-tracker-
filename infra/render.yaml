@@ -3,7 +3,7 @@
 
 services:
   - type: web
-    name: chore-tracker-api
+    name: sellable-api
     runtime: docker
     repo: https://github.com/nikolasmorrell/chore-tracker-
     dockerfilePath: backend/Dockerfile
@@ -11,25 +11,25 @@ services:
     plan: standard
     healthCheckPath: /healthz
     envVars:
-      - fromGroup: chore-tracker-shared
+      - fromGroup: sellable-shared
       - key: APP_ENV
         value: production
       - key: DATABASE_URL
         fromDatabase:
-          name: chore-tracker-db
+          name: sellable-db
           property: connectionString
       - key: DATABASE_SYNC_URL
         fromDatabase:
-          name: chore-tracker-db
+          name: sellable-db
           property: connectionString
       - key: REDIS_URL
         fromService:
           type: redis
-          name: chore-tracker-redis
+          name: sellable-redis
           property: connectionString
 
   - type: worker
-    name: chore-tracker-worker
+    name: sellable-worker
     runtime: docker
     repo: https://github.com/nikolasmorrell/chore-tracker-
     dockerfilePath: backend/Dockerfile
@@ -37,30 +37,30 @@ services:
     plan: standard
     dockerCommand: uv run celery -A app.workers.celery_app.celery worker -l info
     envVars:
-      - fromGroup: chore-tracker-shared
+      - fromGroup: sellable-shared
       - key: DATABASE_URL
         fromDatabase:
-          name: chore-tracker-db
+          name: sellable-db
           property: connectionString
       - key: REDIS_URL
         fromService:
           type: redis
-          name: chore-tracker-redis
+          name: sellable-redis
           property: connectionString
 
   - type: redis
-    name: chore-tracker-redis
+    name: sellable-redis
     plan: standard
     ipAllowList: []
 
 databases:
-  - name: chore-tracker-db
+  - name: sellable-db
     plan: standard
     postgresMajorVersion: 16
     ipAllowList: []
 
 envVarGroups:
-  - name: chore-tracker-shared
+  - name: sellable-shared
     envVars:
       - key: LOG_LEVEL
         value: INFO

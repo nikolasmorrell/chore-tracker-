@@ -15,7 +15,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen">
       <aside className="w-60 border-r bg-white p-4">
-        <div className="mb-8 text-lg font-semibold">Chore Tracker</div>
+        <div className="mb-8 text-lg font-semibold">Sellable</div>
         <nav className="flex flex-col gap-1 text-sm">
           {NAV.map((item) => (
             <Link

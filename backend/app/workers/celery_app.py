@@ -12,7 +12,7 @@ from app.core.config import get_settings
 _settings = get_settings()
 
 celery = Celery(
-    "chore_tracker",
+    "sellable",
     broker=_settings.celery_broker_url,
     backend=_settings.celery_result_backend,
     include=[
@@ -32,4 +32,10 @@ celery.conf.update(
     task_acks_late=True,
     worker_prefetch_multiplier=1,
     task_reject_on_worker_lost=True,
+    beat_schedule={
+        "dispatch-due-alerts": {
+            "task": "alerts.dispatch_due",
+            "schedule": 300.0,  # every 5 minutes
+        },
+    },
 )
