@@ -122,3 +122,22 @@ export interface DocumentUploadResponse {
   upload_url: string;
   fields: Record<string, string>;
 }
+
+export interface SubscriptionRead {
+  id: string;
+  tenant_id: string;
+  stripe_subscription_id: string;
+  price_id: string;
+  status: string;
+  current_period_end: string | null;
+  cancel_at_period_end: boolean;
+}
+
+export interface TenantBillingState {
+  plan: "trial" | "starter" | "pro" | "enterprise";
+  status: string;
+  trial_ends_at: string | null;
+  has_payment_method: boolean;
+  subscription: SubscriptionRead | null;
+  publishable_key: string;
+}

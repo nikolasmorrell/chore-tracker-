@@ -1,13 +1,31 @@
-"""Stripe webhook endpoint.
+"""Stripe webhook endpoint — receives signed events and dispatches them."""
+from __future__ import annotations
 
-Signature verification and event dispatch land in Phase 5. Phase 1 only
-registers the route so the Stripe dashboard can target the URL.
-"""
-from fastapi import APIRouter, HTTPException, status
+import logging
+
+from fastapi import APIRouter, Header, HTTPException, Request, status
+
+from app.services.billing import construct_event, handle_event
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
-@router.post("", summary="Stripe webhook receiver (signed)")
-async def stripe_webhook() -> None:
-    raise HTTPException(status.HTTP_501_NOT_IMPLEMENTED, "Phase 5")
+@router.post("", summary="Stripe webhook receiver (signed)", status_code=200)
+async def stripe_webhook(
+    request: Request,
+    stripe_signature: str | None = Header(None, alias="stripe-signature"),
+) -> dict[str, str]:
+    payload = await request.body()
+    try:
+        event = construct_event(payload, stripe_signature)
+    except (ValueError, RuntimeError) as exc:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, str(exc)) from exc
+
+    try:
+        await handle_event(event)
+    except Exception as exc:
+        logger.exception("stripe.webhook.handler_error", extra={"exc": str(exc)})
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "handler error") from exc
+
+    return {"status": "ok"}

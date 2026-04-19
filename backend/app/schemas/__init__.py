@@ -12,6 +12,13 @@ from app.schemas.auth import (
     TokenPair,
     TokenResponse,
 )
+from app.schemas.billing import (
+    CheckoutSessionRequest,
+    CheckoutSessionResponse,
+    PortalSessionResponse,
+    SubscriptionRead,
+    TenantBillingState,
+)
 from app.schemas.call import CallDetail, CallRead, CallTurnRead
 from app.schemas.common import CursorPage, Message
 from app.schemas.customer import CustomerCreate, CustomerRead, CustomerUpdate
@@ -31,6 +38,8 @@ __all__ = [
     "CallDetail",
     "CallRead",
     "CallTurnRead",
+    "CheckoutSessionRequest",
+    "CheckoutSessionResponse",
     "CursorPage",
     "CustomerCreate",
     "CustomerRead",
@@ -44,11 +53,14 @@ __all__ = [
     "InviteRead",
     "LoginRequest",
     "Message",
+    "PortalSessionResponse",
     "ResetPasswordRequest",
     "SignupRequest",
+    "SubscriptionRead",
     "TaskCreate",
     "TaskRead",
     "TaskUpdate",
+    "TenantBillingState",
     "TenantRead",
     "TenantUpdate",
     "TokenPair",
