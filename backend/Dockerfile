@@ -4,8 +4,8 @@ FROM python:3.12-slim AS builder
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
-    UV_SYSTEM_PYTHON=1 \
-    UV_LINK_MODE=copy
+    UV_LINK_MODE=copy \
+    UV_PROJECT_ENVIRONMENT=/opt/venv
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
       build-essential libpq-dev curl ca-certificates \
@@ -19,12 +19,14 @@ RUN uv sync --all-extras --no-dev --frozen || uv sync --all-extras --no-dev
 
 COPY . .
 
+RUN /opt/venv/bin/python -c "import uvicorn, fastapi; print('deps ok')"
+
 # ---------- runtime stage ----------
 FROM python:3.12-slim AS runtime
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PATH="/app/.venv/bin:$PATH"
+    PATH="/opt/venv/bin:$PATH"
 
 # Runtime libs only: libpq for psycopg, tesseract for OCR fallback, tini for PID1
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -34,11 +36,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && useradd --system --uid 1001 --gid app --home /app app
 
 WORKDIR /app
+COPY --from=builder --chown=app:app /opt/venv /opt/venv
 COPY --from=builder --chown=app:app /build /app
 
 USER app
 EXPOSE 8000
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", \
-     "--proxy-headers", "--forwarded-allow-ips", "*"]
+CMD ["sh", "-c", "exec /opt/venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers --forwarded-allow-ips '*'"]
