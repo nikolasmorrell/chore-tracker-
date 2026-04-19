@@ -8,8 +8,31 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def _normalize_async_url(raw: str) -> str:
+    """Ensure async driver prefix (`postgresql+asyncpg://`).
+
+    Managed Postgres providers (Render, Heroku, Supabase) hand out plain
+    `postgres://` or `postgresql://` URLs; SQLAlchemy's async engine needs an
+    explicit async dialect.
+    """
+    if raw.startswith("postgres://"):
+        raw = "postgresql://" + raw[len("postgres://") :]
+    if raw.startswith("postgresql://"):
+        raw = "postgresql+asyncpg://" + raw[len("postgresql://") :]
+    return raw
+
+
+def _normalize_sync_url(raw: str) -> str:
+    """Ensure sync driver prefix for Alembic (`postgresql+psycopg://`)."""
+    if raw.startswith("postgres://"):
+        raw = "postgresql://" + raw[len("postgres://") :]
+    if raw.startswith("postgresql://") and "+" not in raw.split("://", 1)[0]:
+        raw = "postgresql+psycopg://" + raw[len("postgresql://") :]
+    return raw
 
 
 class Settings(BaseSettings):
@@ -30,6 +53,16 @@ class Settings(BaseSettings):
     # Database
     database_url: str
     database_sync_url: str
+
+    @field_validator("database_url")
+    @classmethod
+    def _validate_db_url(cls, v: str) -> str:
+        return _normalize_async_url(v)
+
+    @field_validator("database_sync_url")
+    @classmethod
+    def _validate_db_sync_url(cls, v: str) -> str:
+        return _normalize_sync_url(v)
 
     # Redis
     redis_url: str = "redis://localhost:6379/0"
