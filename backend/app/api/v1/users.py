@@ -69,7 +69,7 @@ async def invite_user(
     link = f"{settings.frontend_base_url}/accept-invite?token={plaintext}"
     await send_email(
         to=invite.email,
-        subject="You're invited to Sellable",
+        subject="You're invited to Serva",
         html=f'<p><a href="{link}">Accept your invite</a> — expires in 7 days.</p>',
         text=f"Accept your invite: {link}",
     )

@@ -1,4 +1,4 @@
-# Sellable
+# Serva
 
 Multi-tenant AI operations platform for service businesses (roofing, HVAC,
 plumbing, general contracting). It automates document compliance, answers
@@ -93,15 +93,15 @@ pnpm lint && pnpm typecheck && pnpm build
    ```bash
    render blueprint apply infra/render.yaml
    ```
-   This provisions `sellable-api` (web), `sellable-worker`, `sellable-beat`, a
-   managed `sellable-redis`, and a managed `sellable-db` (Postgres 16).
-2. Fill the `sellable-shared` env-var group with real values for
+   This provisions `serva-api` (web), `serva-worker`, `serva-beat`, a
+   managed `serva-redis`, and a managed `serva-db` (Postgres 16).
+2. Fill the `serva-shared` env-var group with real values for
    `ANTHROPIC_API_KEY`, `STRIPE_*`, `TWILIO_*`, `SENDGRID_API_KEY`,
    `S3_*`, and `SENTRY_DSN`. `JWT_SECRET` auto-generates; `CORS_ALLOW_ORIGINS`
    and the public URLs are pinned in the blueprint.
 3. Run Alembic on first deploy:
    ```bash
-   render run alembic upgrade head -s sellable-api
+   render run alembic upgrade head -s serva-api
    ```
    (The blueprint also sets `preDeployCommand: alembic upgrade head`, so
    subsequent deploys migrate automatically.)
@@ -113,16 +113,16 @@ Import the repo into Vercel with these settings (already encoded in
 
 - Root directory: `frontend`
 - Build: `pnpm build` · Install: `pnpm install --frozen-lockfile`
-- Env: `NEXT_PUBLIC_API_URL=https://api.sellable.app`,
+- Env: `NEXT_PUBLIC_API_URL=https://api.serva.app`,
   `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=...`
 
 ### Third-party webhooks
 
-- **Stripe** → `https://api.sellable.app/api/v1/webhooks/stripe`; subscribe to
+- **Stripe** → `https://api.serva.app/api/v1/webhooks/stripe`; subscribe to
   `customer.subscription.{created,updated,deleted}` and
   `checkout.session.completed`. Copy the signing secret into
   `STRIPE_WEBHOOK_SECRET`.
-- **Twilio** → voice number webhook `https://api.sellable.app/api/v1/webhooks/twilio/voice`
+- **Twilio** → voice number webhook `https://api.serva.app/api/v1/webhooks/twilio/voice`
   (POST), status callback `/api/v1/webhooks/twilio/voice/status`. Each tenant
   configures their purchased Twilio number via Settings → Company.
 
@@ -147,14 +147,14 @@ Import the repo into Vercel with these settings (already encoded in
   uses this for healthchecks.
 - `celery -A app.workers.celery_app.celery inspect active` — verify workers
   are processing tasks.
-- `render logs -s sellable-worker --tail 200` — scan for task failures.
+- `render logs -s serva-worker --tail 200` — scan for task failures.
 
 ### Common incidents
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| Alerts not sending | `sellable-beat` is down | Restart the beat worker; check `celery beat -l info` logs for scheduler errors |
-| Upload stuck at `pending` | Celery worker down or OCR/Claude failing | Check `sellable-worker` logs; reprocess via `POST /api/v1/documents/{id}/reprocess` |
+| Alerts not sending | `serva-beat` is down | Restart the beat worker; check `celery beat -l info` logs for scheduler errors |
+| Upload stuck at `pending` | Celery worker down or OCR/Claude failing | Check `serva-worker` logs; reprocess via `POST /api/v1/documents/{id}/reprocess` |
 | 5xx on `/api/v1/auth/login` | DB connection pool exhausted | Inspect `pg_stat_activity`; scale API dynos; check `/readyz` |
 | Stripe webhook signature fails | Wrong `STRIPE_WEBHOOK_SECRET` | Rotate in Stripe dashboard + Render env group |
 | Twilio call says "sorry…" | Tenant missing `twilio_phone_number` or auth token wrong | Confirm the tenant's `twilio_phone_number` in Settings; verify Render env vars |

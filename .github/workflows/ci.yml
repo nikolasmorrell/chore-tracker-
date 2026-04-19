@@ -17,7 +17,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: sellable_test
+          POSTGRES_DB: serva_test
         ports: ["5432:5432"]
         options: >-
           --health-cmd "pg_isready -U postgres"
@@ -26,8 +26,8 @@ jobs:
         image: redis:7-alpine
         ports: ["6379:6379"]
     env:
-      DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/sellable_test
-      DATABASE_SYNC_URL: postgresql+psycopg://postgres:postgres@localhost:5432/sellable_test
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/serva_test
+      DATABASE_SYNC_URL: postgresql+psycopg://postgres:postgres@localhost:5432/serva_test
       REDIS_URL: redis://localhost:6379/0
     steps:
       - uses: actions/checkout@v4

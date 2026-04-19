@@ -12,7 +12,7 @@ from app.core.config import get_settings
 _settings = get_settings()
 
 celery = Celery(
-    "sellable",
+    "serva",
     broker=_settings.celery_broker_url,
     backend=_settings.celery_result_backend,
     include=[

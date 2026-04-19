@@ -134,7 +134,7 @@ async def forgot_password(payload: ForgotPasswordRequest, session: SessionDep) -
         link = f"{settings.frontend_base_url}/reset-password?token={plaintext}"
         await send_email(
             to=user.email,
-            subject="Reset your Sellable password",
+            subject="Reset your Serva password",
             html=f'<p>Click <a href="{link}">here</a> to reset your password. This link expires in one hour.</p>',
             text=f"Reset your password: {link}",
         )

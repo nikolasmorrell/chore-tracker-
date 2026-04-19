@@ -4,7 +4,7 @@ export default function LandingPage() {
   return (
     <main className="mx-auto max-w-5xl px-6 py-20">
       <header className="mb-16 flex items-center justify-between">
-        <span className="text-xl font-semibold">Sellable</span>
+        <span className="text-xl font-semibold">Serva</span>
         <nav className="flex gap-6 text-sm">
           <Link href="/login">Log in</Link>
           <Link
@@ -21,7 +21,7 @@ export default function LandingPage() {
           AI that runs the office work your crew hates.
         </h1>
         <p className="mt-6 max-w-2xl text-lg text-slate-600">
-          Sellable reads insurance certificates, tracks permit deadlines,
+          Serva reads insurance certificates, tracks permit deadlines,
           answers incoming calls, and follows up with customers so your team
           can spend their day on the job — not on paperwork.
         </p>

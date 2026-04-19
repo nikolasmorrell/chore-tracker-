@@ -7,7 +7,7 @@
 
 services:
   - type: web
-    name: sellable-api
+    name: serva-api
     runtime: docker
     repo: https://github.com/nikolasmorrell/chore-tracker-
     dockerfilePath: backend/Dockerfile
@@ -17,35 +17,35 @@ services:
     autoDeploy: true
     preDeployCommand: alembic upgrade head
     envVars:
-      - fromGroup: sellable-shared
+      - fromGroup: serva-shared
       - key: APP_ENV
         value: production
       - key: DATABASE_URL
         fromDatabase:
-          name: sellable-db
+          name: serva-db
           property: connectionString
       - key: DATABASE_SYNC_URL
         fromDatabase:
-          name: sellable-db
+          name: serva-db
           property: connectionString
       - key: REDIS_URL
         fromService:
           type: redis
-          name: sellable-redis
+          name: serva-redis
           property: connectionString
       - key: CELERY_BROKER_URL
         fromService:
           type: redis
-          name: sellable-redis
+          name: serva-redis
           property: connectionString
       - key: CELERY_RESULT_BACKEND
         fromService:
           type: redis
-          name: sellable-redis
+          name: serva-redis
           property: connectionString
 
   - type: worker
-    name: sellable-worker
+    name: serva-worker
     runtime: docker
     repo: https://github.com/nikolasmorrell/chore-tracker-
     dockerfilePath: backend/Dockerfile
@@ -54,33 +54,33 @@ services:
     dockerCommand: celery -A app.workers.celery_app.celery worker -l info --concurrency 4
     autoDeploy: true
     envVars:
-      - fromGroup: sellable-shared
+      - fromGroup: serva-shared
       - key: DATABASE_URL
         fromDatabase:
-          name: sellable-db
+          name: serva-db
           property: connectionString
       - key: DATABASE_SYNC_URL
         fromDatabase:
-          name: sellable-db
+          name: serva-db
           property: connectionString
       - key: REDIS_URL
         fromService:
           type: redis
-          name: sellable-redis
+          name: serva-redis
           property: connectionString
       - key: CELERY_BROKER_URL
         fromService:
           type: redis
-          name: sellable-redis
+          name: serva-redis
           property: connectionString
       - key: CELERY_RESULT_BACKEND
         fromService:
           type: redis
-          name: sellable-redis
+          name: serva-redis
           property: connectionString
 
   - type: worker
-    name: sellable-beat
+    name: serva-beat
     runtime: docker
     repo: https://github.com/nikolasmorrell/chore-tracker-
     dockerfilePath: backend/Dockerfile
@@ -89,54 +89,54 @@ services:
     dockerCommand: celery -A app.workers.celery_app.celery beat -l info
     autoDeploy: true
     envVars:
-      - fromGroup: sellable-shared
+      - fromGroup: serva-shared
       - key: DATABASE_URL
         fromDatabase:
-          name: sellable-db
+          name: serva-db
           property: connectionString
       - key: DATABASE_SYNC_URL
         fromDatabase:
-          name: sellable-db
+          name: serva-db
           property: connectionString
       - key: REDIS_URL
         fromService:
           type: redis
-          name: sellable-redis
+          name: serva-redis
           property: connectionString
       - key: CELERY_BROKER_URL
         fromService:
           type: redis
-          name: sellable-redis
+          name: serva-redis
           property: connectionString
       - key: CELERY_RESULT_BACKEND
         fromService:
           type: redis
-          name: sellable-redis
+          name: serva-redis
           property: connectionString
 
   - type: redis
-    name: sellable-redis
+    name: serva-redis
     plan: standard
     ipAllowList: []
     maxmemoryPolicy: allkeys-lru
 
 databases:
-  - name: sellable-db
+  - name: serva-db
     plan: standard
     postgresMajorVersion: 16
     ipAllowList: []
 
 envVarGroups:
-  - name: sellable-shared
+  - name: serva-shared
     envVars:
       - key: LOG_LEVEL
         value: INFO
       - key: APP_BASE_URL
-        value: https://api.sellable.app
+        value: https://api.serva.app
       - key: FRONTEND_BASE_URL
-        value: https://app.sellable.app
+        value: https://app.serva.app
       - key: CORS_ALLOW_ORIGINS
-        value: '["https://app.sellable.app","https://sellable.app"]'
+        value: '["https://app.serva.app","https://serva.app"]'
       - key: JWT_SECRET
         generateValue: true
       - key: ANTHROPIC_API_KEY
@@ -164,8 +164,8 @@ envVarGroups:
       - key: S3_SECRET_ACCESS_KEY
         sync: false
       - key: S3_BUCKET_DOCUMENTS
-        value: sellable-documents
+        value: serva-documents
       - key: S3_BUCKET_CALL_AUDIO
-        value: sellable-call-audio
+        value: serva-call-audio
       - key: SENTRY_DSN
         sync: false

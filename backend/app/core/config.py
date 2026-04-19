@@ -45,7 +45,7 @@ class Settings(BaseSettings):
 
     # App
     app_env: Literal["development", "staging", "production", "test"] = "development"
-    app_name: str = "sellable"
+    app_name: str = "serva"
     app_base_url: str = "http://localhost:8000"
     frontend_base_url: str = "http://localhost:3000"
     log_level: str = "INFO"
@@ -82,8 +82,8 @@ class Settings(BaseSettings):
     s3_region: str = "us-east-1"
     s3_access_key_id: str = ""
     s3_secret_access_key: str = ""
-    s3_bucket_documents: str = "sellable-documents"
-    s3_bucket_call_audio: str = "sellable-call-audio"
+    s3_bucket_documents: str = "serva-documents"
+    s3_bucket_call_audio: str = "serva-call-audio"
     s3_presigned_url_ttl_seconds: int = 900
 
     # Claude
@@ -109,8 +109,8 @@ class Settings(BaseSettings):
 
     # Email
     sendgrid_api_key: str = ""
-    email_from_address: str = "no-reply@sellable.app"
-    email_from_name: str = "Sellable"
+    email_from_address: str = "no-reply@serva.app"
+    email_from_name: str = "Serva"
 
     # Billing
     stripe_secret_key: str = ""

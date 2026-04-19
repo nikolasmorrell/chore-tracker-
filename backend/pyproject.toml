@@ -1,7 +1,7 @@
 [project]
-name = "sellable-backend"
+name = "serva-backend"
 version = "0.1.0"
-description = "Sellable — multi-tenant AI SaaS for service businesses — FastAPI backend"
+description = "Serva — multi-tenant AI SaaS for service businesses — FastAPI backend"
 requires-python = ">=3.12"
 dependencies = [
   "fastapi>=0.115",

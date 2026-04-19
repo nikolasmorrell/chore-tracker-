@@ -22,7 +22,7 @@ def _message_for(alert: Alert, document: Document | None) -> tuple[str, str]:
     if alert.kind == "missing_field":
         return (
             "Action needed: missing fields on a document",
-            f"We detected missing fields on {filename}. Please open Sellable to review.",
+            f"We detected missing fields on {filename}. Please open Serva to review.",
         )
     days_map = {
         "expiring_30": 30,
@@ -34,7 +34,7 @@ def _message_for(alert: Alert, document: Document | None) -> tuple[str, str]:
     when = "today" if days == 0 else f"in {days} days"
     return (
         f"Document expiring {when}: {filename}",
-        f"{filename} expires {when}. Open Sellable to renew.",
+        f"{filename} expires {when}. Open Serva to renew.",
     )
 
 
