@@ -1,0 +1,171 @@
+# Render.com blueprint — API + Celery worker + Celery beat + Postgres + Redis.
+# Apply with `render blueprint apply` once the repo is connected to Render.
+#
+# DATABASE_URL and DATABASE_SYNC_URL both receive the same plain `postgres://`
+# connection string from Render; app.core.config normalizes them to the
+# correct async (`asyncpg`) and sync (`psycopg`) dialects at load time.
+
+services:
+  - type: web
+    name: serva-api
+    runtime: docker
+    repo: https://github.com/nikolasmorrell/chore-tracker-
+    dockerfilePath: backend/Dockerfile
+    rootDir: backend
+    plan: standard
+    healthCheckPath: /readyz
+    autoDeploy: true
+    preDeployCommand: alembic upgrade head
+    envVars:
+      - fromGroup: serva-shared
+      - key: APP_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: serva-db
+          property: connectionString
+      - key: DATABASE_SYNC_URL
+        fromDatabase:
+          name: serva-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: serva-redis
+          property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: redis
+          name: serva-redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          type: redis
+          name: serva-redis
+          property: connectionString
+
+  - type: worker
+    name: serva-worker
+    runtime: docker
+    repo: https://github.com/nikolasmorrell/chore-tracker-
+    dockerfilePath: backend/Dockerfile
+    rootDir: backend
+    plan: standard
+    dockerCommand: celery -A app.workers.celery_app.celery worker -l info --concurrency 4
+    autoDeploy: true
+    envVars:
+      - fromGroup: serva-shared
+      - key: DATABASE_URL
+        fromDatabase:
+          name: serva-db
+          property: connectionString
+      - key: DATABASE_SYNC_URL
+        fromDatabase:
+          name: serva-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: serva-redis
+          property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: redis
+          name: serva-redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          type: redis
+          name: serva-redis
+          property: connectionString
+
+  - type: worker
+    name: serva-beat
+    runtime: docker
+    repo: https://github.com/nikolasmorrell/chore-tracker-
+    dockerfilePath: backend/Dockerfile
+    rootDir: backend
+    plan: starter
+    dockerCommand: celery -A app.workers.celery_app.celery beat -l info
+    autoDeploy: true
+    envVars:
+      - fromGroup: serva-shared
+      - key: DATABASE_URL
+        fromDatabase:
+          name: serva-db
+          property: connectionString
+      - key: DATABASE_SYNC_URL
+        fromDatabase:
+          name: serva-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: serva-redis
+          property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: redis
+          name: serva-redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          type: redis
+          name: serva-redis
+          property: connectionString
+
+  - type: redis
+    name: serva-redis
+    plan: standard
+    ipAllowList: []
+    maxmemoryPolicy: allkeys-lru
+
+databases:
+  - name: serva-db
+    plan: standard
+    postgresMajorVersion: 16
+    ipAllowList: []
+
+envVarGroups:
+  - name: serva-shared
+    envVars:
+      - key: LOG_LEVEL
+        value: INFO
+      - key: APP_BASE_URL
+        value: https://api.serva.app
+      - key: FRONTEND_BASE_URL
+        value: https://app.serva.app
+      - key: CORS_ALLOW_ORIGINS
+        value: '["https://app.serva.app","https://serva.app"]'
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_PRICE_STARTER
+        sync: false
+      - key: STRIPE_PRICE_PRO
+        sync: false
+      - key: STRIPE_PRICE_ENTERPRISE
+        sync: false
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false
+      - key: S3_BUCKET_DOCUMENTS
+        value: serva-documents
+      - key: S3_BUCKET_CALL_AUDIO
+        value: serva-call-audio
+      - key: SENTRY_DSN
+        sync: false

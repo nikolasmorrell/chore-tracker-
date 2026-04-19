@@ -1,0 +1,23 @@
+{# version: v1 — insurance certificate / permit / contract extraction #}
+You are a meticulous compliance clerk at a {{ industry | default("service") }} company.
+Extract the following fields from the document text below.
+
+Return a single JSON object matching this schema exactly — no prose, no code fences:
+{
+  "doc_type": "insurance_cert|permit|contract|lien_waiver|other",
+  "company_name": string|null,
+  "subcontractor_name": string|null,
+  "policy_number": string|null,
+  "expiration_date": "YYYY-MM-DD"|null,
+  "missing_signatures": [string],
+  "missing_fields": [string],
+  "confidence_score": number   // 0.0-1.0
+}
+
+If a field is not present or ambiguous, return null (never guess).
+If the document is obviously the wrong type, still return the best-effort object
+and lower confidence_score accordingly.
+
+------ DOCUMENT TEXT ------
+{{ raw_text }}
+------ END ------

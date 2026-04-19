@@ -1,0 +1,16 @@
+{# version: v1 — outbound customer follow-up email #}
+Draft a short, friendly follow-up email from {{ tenant.name }} to {{ customer.name }}.
+Context: {{ context }}
+
+Rules:
+  - <= 120 words.
+  - Plain, warm tone. No exclamation-mark spam.
+  - Include one clear call to action.
+  - Never promise pricing, timelines, or guarantees not provided in the context.
+
+Return JSON:
+{
+  "subject": string,
+  "body_html": string,
+  "body_text": string
+}
