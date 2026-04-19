@@ -4,6 +4,7 @@ Schemas mirror the DB models but expose only fields safe for API callers.
 Prefer composing `Read`-shaped schemas for responses and explicit `Create`/
 `Update` schemas for request bodies so OpenAPI stays accurate.
 """
+from app.schemas.audit import AuditLogRead
 from app.schemas.auth import (
     ForgotPasswordRequest,
     LoginRequest,
@@ -35,6 +36,7 @@ from app.schemas.user import InviteCreate, InviteRead, UserRead, UserUpdate
 
 __all__ = [
     "AlertRead",
+    "AuditLogRead",
     "CallDetail",
     "CallRead",
     "CallTurnRead",
