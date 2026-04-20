@@ -5,11 +5,13 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Cookie, HTTPException, Response, status
+from sqlalchemy import select
 
 from app.api.deps import SessionDep
 from app.core.config import get_settings
 from app.core.cookies import REFRESH_COOKIE, clear_auth_cookies, set_auth_cookies
 from app.core.security import decode_token
+from app.db.models.user import User
 from app.schemas.auth import (
     ForgotPasswordRequest,
     LoginRequest,
@@ -24,6 +26,11 @@ from app.services.notifications import send_email
 from app.services.onboarding import create_tenant_with_owner
 
 router = APIRouter()
+
+DEMO_EMAIL = "demo@serva.app"
+DEMO_PASSWORD = "demo-password-2026"
+DEMO_COMPANY = "Demo Roofing Co"
+DEMO_FULL_NAME = "Demo User"
 
 
 @router.post(
@@ -49,6 +56,36 @@ async def signup(payload: SignupRequest, session: SessionDep, response: Response
         entity_id=tenant.id,
     )
     await session.commit()
+
+    access, refresh, expires_in = auth_service.issue_tokens(user)
+    set_auth_cookies(response, access_token=access, refresh_token=refresh)
+    return TokenResponse(access_token=access, expires_in=expires_in)
+
+
+@router.post(
+    "/demo-login",
+    response_model=TokenResponse,
+    summary="One-click demo login (creates the demo tenant on first call)",
+)
+async def demo_login(session: SessionDep, response: Response) -> TokenResponse:
+    user = await session.scalar(select(User).where(User.email == DEMO_EMAIL))
+    if user is None:
+        _tenant, user = await create_tenant_with_owner(
+            session,
+            company_name=DEMO_COMPANY,
+            full_name=DEMO_FULL_NAME,
+            email=DEMO_EMAIL,
+            password=DEMO_PASSWORD,
+        )
+        await audit.record(
+            session,
+            tenant_id=user.tenant_id,
+            actor_user_id=user.id,
+            action="tenant.demo_created",
+            entity_type="tenant",
+            entity_id=user.tenant_id,
+        )
+        await session.commit()
 
     access, refresh, expires_in = auth_service.issue_tokens(user)
     set_auth_cookies(response, access_token=access, refresh_token=refresh)
