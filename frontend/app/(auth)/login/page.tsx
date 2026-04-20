@@ -25,6 +25,19 @@ export default function LoginPage() {
     }
   }
 
+  async function onDemo() {
+    setErr(null);
+    setBusy(true);
+    try {
+      await api.post("/api/v1/auth/demo-login", {});
+      router.push("/dashboard");
+    } catch (e) {
+      setErr(e instanceof ApiError ? e.message : "Demo login failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <main className="mx-auto max-w-md px-6 py-20">
       <h1 className="text-2xl font-semibold">Log in</h1>
@@ -56,6 +69,19 @@ export default function LoginPage() {
           {busy ? "Signing in…" : "Sign in"}
         </button>
       </form>
+      <div className="mt-4 flex items-center gap-3">
+        <div className="h-px flex-1 bg-slate-200" />
+        <span className="text-xs uppercase text-slate-400">or</span>
+        <div className="h-px flex-1 bg-slate-200" />
+      </div>
+      <button
+        type="button"
+        onClick={onDemo}
+        disabled={busy}
+        className="mt-4 w-full rounded-md border border-slate-300 px-4 py-2 text-slate-900 hover:bg-slate-50 disabled:opacity-60"
+      >
+        Try demo (no signup)
+      </button>
       <div className="mt-4 flex justify-between text-sm text-slate-600">
         <Link href="/signup">Create account</Link>
         <Link href="/forgot-password">Forgot password?</Link>
